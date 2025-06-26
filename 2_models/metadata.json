@@ -1,0 +1,12 @@
+{
+    "type": "sklearn RandomForestClassifier",
+    "hyperparametres": {
+        "n_estimators": 100,
+        "max_depth": 10,
+        "random_state": 1
+    },
+    "metriques": {
+        "accuracy": 0.8550591125441425,
+        "f1_score": 0.6303837118245889
+    }
+}
