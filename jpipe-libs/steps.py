@@ -5,19 +5,26 @@ import pickle
 import importlib.util
 
 FAIRNESS_THRESHOLD: float | None = None
+FAIRNESS_THRESHOLD_TYPE: str | None = None
+
 
 # Strategy "verify" in "fairClassification"
 def verifying_acceptance_threshold() -> bool:
-    return FAIRNESS_MEASURE > FAIRNESS_THRESHOLD
+    if FAIRNESS_THRESHOLD_TYPE=="sup" :
+        return FAIRNESS_MEASURE > FAIRNESS_THRESHOLD
+    else :
+        return FAIRNESS_MEASURE < FAIRNESS_THRESHOLD
     
 # Evidence "level" in "fairClassification"
 def threshold_level_is_defined () -> bool:
     global FAIRNESS_THRESHOLD
+    global FAIRNESS_THRESHOLD_TYPE
 
     if Path("../3_exigences/fairness.json").exists():
         with open("../3_exigences/fairness.json", "r") as f:
             exigences = json.load(f)
             FAIRNESS_THRESHOLD = exigences['threshold']
+            FAIRNESS_THRESHOLD_TYPE = exigences['threshold_type']
         return True    
     return False
 
@@ -38,29 +45,26 @@ FAIRNESS_MEASURE: float | None = None
 # Strategy "fmetric" in "fairClassification"
 def demographic_parity_measure() -> bool :
     global FAIRNESS_MEASURE
+    
+    # Ce bloc peut être décomposé en une évidence supplémentaire sous cette stratégie :
+    # "Sensitive feature available" par exemple
+    with open("../3_exigences/fairness.json", "r") as f:
+        exigences = json.load(f)
+    sensitive_feature_name = exigences["sensitive_feature"]
+    sensitive_test = X_TEST[sensitive_feature_name]
 
-    if None in (MODEL, X_TEST, Y_TEST, FAIRNESS_MEASURE_FUNCTION):
-        return False
-    else :
-        # Ce bloc peut être décomposé en une évidence supplémentaire sous cette stratégie :
-        # "Sensitive feature available" par exemple
-        with open("../3_exigences/fairness.json", "r") as f:
-            exigences = json.load(f)
-        sensitive_feature_name = exigences["sensitive_feature"]
-        sensitive_test = X_TEST[sensitive_feature_name]
+    y_pred = MODEL.predict(X_TEST)
 
-        y_pred = MODEL.predict(X_TEST)
+    measure_path = Path(FAIRNESS_MEASURE_FUNCTION)
+    spec = importlib.util.spec_from_file_location("fairness", measure_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
 
-        measure_path = Path(FAIRNESS_MEASURE_FUNCTION)
-        spec = importlib.util.spec_from_file_location("fairness", measure_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+    measurement = module.measurement
 
-        measurement = module.measurement
-
-        FAIRNESS_MEASURE = float(measurement(Y_TEST, y_pred, sensitive_test))
-        
-        return True
+    FAIRNESS_MEASURE = float(measurement(Y_TEST, y_pred, sensitive_test))
+    
+    return True
 
 # Evidence "dataset" in "fairClassification"
 def test_data_set_available() -> bool :
