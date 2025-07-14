@@ -75,7 +75,7 @@ Monday, June 9, 2025 to July 11, 2025
 ## Contributions
 - Thanks to **Jean-Michel BRUEL** and **Tristan GOUAICHAULT** from IRIRT
 
-## author
+## Author
 **Matteo Lemaire** – 4th year (work-study) Computer Engineering student at CESI
 
 - **GitHub:** [Zeoqwert](https://github.com/Zeoqwert)
