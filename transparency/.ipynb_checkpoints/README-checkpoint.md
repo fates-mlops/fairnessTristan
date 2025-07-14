@@ -1,63 +1,69 @@
-# N
+# Welcome to the concept of AI transparency
 
-> il faut faire encore les liens avec toutes les fonctions (rendre fonctionnelles aussi)
-> faire le readme
-> 
-> faire une fonction pour juste entrer des requêtes SQL
-> Commenter tous les codes
->
-> revoir le rapport en mettant bien les références etc .....
+[Irit](https://www.irit.fr/wp-content/uploads/2019/09/Logo_sans_intitule.png)
+[CESI](https://upload.wikimedia.org/wikipedia/fr/thumb/e/ef/Logo_cesi_2022.png/1200px-Logo_cesi_2022.png)
 
 ---
 
-## 🚀 Fonctionnalités
+## Introduction
 
-- 🔍 Décrit brièvement les principales fonctionnalités
-- ⚙️ Comportement automatique ou personnalisable
-- 🔐 Sécurité, performance, portabilité (si pertinent)
+- We have a main file, 'main_en', that concisely presents the concept of transparency.
+- Then we have various aspects of the project explained in the project files. (Explained in the tree structure section)
 
----
+## Installation
 
-## 🧠 Pourquoi ce projet ?
-
-Explique en quelques phrases :
-- Pourquoi tu l’as créé
-- À quel problème il répond
-- À qui il est destiné (développeurs, data scientists, étudiants, etc.)
-
----
-
-## 📦 Installation
+- Before doing anything in the document, you should execute all the lines in the 'import' file at the bottom of the directory to access all the features.
+- Executing all the files (cell by cell) in the 'Functions' folder will also help avoid possible problems.
 
 
-# Exemple pour Python
-git clone https://github.com/votre-utilisateur/N.git
-cd N
-pip install -r requirements.txt
 
-## Licence
-Distribué sous la licence MIT (ou autre) – voir LICENSE.md pour plus de détails.
+## Tree structure 
 
-## Contribuer
-Tu acceptes les contributions ? Indique :
+Projet/
+│
+│   Import.ipynb                   # Notebook for data import or preprocessing
+│   main_en.ipynb                  # Main script (English version)
+│   README.md                      # Project overview and usage instructions
+│   transparence_ia.db             # SQLite database used by the project
+│
+├───.ipynb_checkpoints/           # Automatic Jupyter notebook backups
+│
+├───Documents/                    # Working documents and textual resources
+│   │
+│   ├───Concepts généraux.docx     # Notes on the general concepts covered
+│   ├───CT a faire.docx            # To-do list or pending content
+│   ├───doc.docx                   # Supporting document (unspecified)
+│   ├───Plan d'action.docx         # Project planning or next steps
+│
+├───Functions/                    # Functional modules in notebook form
+│   │
+│   ├───01-Scalabilite_transparence.ipynb     # Reflections or tools related to scalability and transparency
+│   ├───02-BDD.ipynb                          # Database structure or connection
+│   ├───03-graphique.ipynb                    # Graphs or data visualizations
+│   ├───04-table_bdd.ipynb                    # Creation of tables in the database
+│   ├───05-Ajouter_relation.ipynb             # Functionality to add relationships to the DB
+│   ├───06-ajouter_sous_concept.ipynb         # Add sub-concepts to the database
+│   ├───07-Query_bdd.ipynb                    # Query execution on the database
+│   ├───transparence_ia.db                    # (Copy of the DB used in these modules)
+│
+├───old/                         # Older versions of notebooks or deprecated files
+│   ├───main_fr.ipynb            # Previous version of the main script in French
+│   ├───Mots-clés.ipynb          # Work on keywords or taxonomy
+│
+├───Source/                      # Source code and additional components
+│   ├───ChatBot.ipynb            # Chatbot prototype or logic
+│   ├───Critères.ipynb           # Evaluation or decision-making criteria
+│   ├───keywords.ipynb           # Keyword processing or extraction
+│
+│   └───img/
+│       └───MachineLearning.png  # Image used in notebooks or documentation
 
-Fork du projet
 
-Création de branche (git checkout -b feature/NouvelleFonction)
+## Contributions
+- Thanks to **Jean-Michel BRUEL** and **Tristan GOUAICHAULT** from IRIRT
 
-Pull request
-
-Optionnel : Lien vers un CONTRIBUTING.md.
-
-## Auteur·rice
-Ton Nom – @ton-pseudo
-Contact : ton@email.com
-
-## Liens utiles (optionnel)
-Documentation officielle
-
-Article de blog
-
-Démo en ligne
-
+## Auteur
+Matteo Lemaire in 4th year (work-study) of computer engineering at CESI:
+    Github : Zeoqwert
+    Mail : matteolemaire59000@gmail.com
 
