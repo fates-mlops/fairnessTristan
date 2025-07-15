@@ -4,6 +4,8 @@ import pandas as pd
 import pickle
 import importlib.util
 
+SELECTED_EXPERIMENT = "RF_Income_Fair"
+
 FAIRNESS_THRESHOLD: float | None = None
 FAIRNESS_THRESHOLD_TYPE: str | None = None
 
@@ -20,8 +22,8 @@ def threshold_level_is_defined () -> bool:
     global FAIRNESS_THRESHOLD
     global FAIRNESS_THRESHOLD_TYPE
 
-    if Path("../3_requirements/fairness.json").exists():
-        with open("../3_requirements/fairness.json", "r") as f:
+    if Path("../requirements/fairness.json").exists():
+        with open("../requirements/fairness.json", "r") as f:
             req = json.load(f)
             FAIRNESS_THRESHOLD = req['threshold']
             FAIRNESS_THRESHOLD_TYPE = req['threshold_type']
@@ -43,10 +45,7 @@ def demographic_parity_measure() -> bool :
     
     # Ce bloc peut être décomposé en une évidence supplémentaire sous cette stratégie :
     # "Sensitive feature available" par exemple
-    with open("../3_requirements/fairness.json", "r") as f:
-        req = json.load(f)
-    sensitive_feature_name = req["sensitive_feature"]
-    sensitive_test = X_TEST[sensitive_feature_name]
+    sensitive_test = pd.read_csv(f"../experiments/{SELECTED_EXPERIMENT}/split/p_test.csv")
 
     y_pred = MODEL.predict(X_TEST)
 
@@ -54,9 +53,7 @@ def demographic_parity_measure() -> bool :
     spec = importlib.util.spec_from_file_location("fairness", measure_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-
-    measurement = module.measurement
-
+    measurement = module.metric
     FAIRNESS_MEASURE = float(measurement(Y_TEST, y_pred, sensitive_test))
     
     return True
@@ -65,12 +62,12 @@ def demographic_parity_measure() -> bool :
 def test_data_set_available() -> bool :
     global X_TEST, Y_TEST
 
-    x_path = Path("../1_data/3_split/X_test.csv")
-    y_path = Path("../1_data/3_split/y_test.csv")
+    x_path = Path(f"../experiments/{SELECTED_EXPERIMENT}/split/X_test.csv")
+    y_path = Path(f"../experiments/{SELECTED_EXPERIMENT}/split/y_test.csv")
 
     if x_path.exists() and y_path.exists():
-        X_TEST = pd.read_csv(x_path, index_col=0)
-        Y_TEST = pd.read_csv(y_path, index_col=0).values.ravel()
+        X_TEST = pd.read_csv(x_path)
+        Y_TEST = pd.read_csv(y_path).values.ravel()
         return True
     return False
 
@@ -78,10 +75,10 @@ def test_data_set_available() -> bool :
 def metric_measurement_available() -> bool :
     global FAIRNESS_MEASURE_FUNCTION
 
-    if Path("../3_requirements/fairness.json").exists():
-        with open("../3_requirements/fairness.json", "r") as f:
+    if Path("../requirements/fairness.json").exists():
+        with open("../requirements/fairness.json", "r") as f:
             req = json.load(f)
-            FAIRNESS_MEASURE_FUNCTION = f"../3_requirements/{req['function']}"
+            FAIRNESS_MEASURE_FUNCTION = f"../metrics/fairness/{req['function']}"
         return True
     return False
 
@@ -91,8 +88,8 @@ def metric_measurement_available() -> bool :
 def model_available() -> bool :
     global MODEL
 
-    if Path("../2_models/random_forest_model.pkl").exists():
-        with open("../2_models/random_forest_model.pkl", "rb") as f:
+    if Path(f"../experiments/{SELECTED_EXPERIMENT}/model.pkl").exists():
+        with open(f"../experiments/{SELECTED_EXPERIMENT}/model.pkl", "rb") as f:
             MODEL = pickle.load(f)
         return True
     return False

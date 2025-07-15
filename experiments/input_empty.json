@@ -1,0 +1,21 @@
+{
+    "experiment_name" : "",
+    "data_source" : {
+        "dataset" : "",
+        "preprocessing" : ".py"
+    },
+    "split_param" : {
+        "target" : "",
+        "protected" : "",
+        "test_size" : 0,
+        "seed" : 0
+    },
+    "model" : {
+        "type" : "",
+        "hyperparameters" : {
+        }
+    },
+    "performance_metrics" : [],
+    "fairness_metrics" : [],
+    "fairness_treatment" : []
+}

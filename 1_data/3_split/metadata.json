@@ -1,7 +1,0 @@
-{
-    "sample": "x0.csv",
-    "target_column": "income",
-    "test_size": 0.2,
-    "train_size": 0.8,
-    "seed": 42
-}

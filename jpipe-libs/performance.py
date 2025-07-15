@@ -4,6 +4,8 @@ import pandas as pd
 import pickle
 import importlib.util
 
+SELECTED_EXPERIMENT = "RF_Income_Fair"
+
 PERFORMANCE_THRESHOLD: float | None = None
 PERFORMANCE_THRESHOLD_TYPE: str | None = None
 
@@ -20,8 +22,8 @@ def threshold_level_is_defined() -> bool:
     global PERFORMANCE_THRESHOLD
     global PERFORMANCE_THRESHOLD_TYPE
 
-    if Path("../3_requirements/performance.json").exists():
-        with open("../3_requirements/performance.json", "r") as f:
+    if Path("../requirements/performance.json").exists():
+        with open("../requirements/performance.json", "r") as f:
             req = json.load(f)
             PERFORMANCE_THRESHOLD = req['threshold']
             PERFORMANCE_THRESHOLD_TYPE = req['threshold_type']
@@ -47,9 +49,7 @@ def f1_score_measure() -> bool :
     spec = importlib.util.spec_from_file_location("performance", measure_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-
-    measurement = module.measurement
-
+    measurement = module.metric
     PERFORMANCE_MEASURE = float(measurement(Y_TEST, y_pred))
     
     return True
@@ -58,12 +58,12 @@ def f1_score_measure() -> bool :
 def test_data_set_available() -> bool :
     global X_TEST, Y_TEST
 
-    x_path = Path("../1_data/3_split/X_test.csv")
-    y_path = Path("../1_data/3_split/y_test.csv")
+    x_path = Path(f"../experiments/{SELECTED_EXPERIMENT}/split/X_test.csv")
+    y_path = Path(f"../experiments/{SELECTED_EXPERIMENT}/split/y_test.csv")
 
     if x_path.exists() and y_path.exists():
-        X_TEST = pd.read_csv(x_path, index_col=0)
-        Y_TEST = pd.read_csv(y_path, index_col=0).values.ravel()
+        X_TEST = pd.read_csv(x_path)
+        Y_TEST = pd.read_csv(y_path).values.ravel()
         return True
     return False
 
@@ -71,10 +71,10 @@ def test_data_set_available() -> bool :
 def metric_measurement_available() -> bool :
     global PERFORMANCE_MEASURE_FUNCTION
 
-    if Path("../3_requirements/performance.json").exists():
-        with open("../3_requirements/performance.json", "r") as f:
+    if Path("../requirements/performance.json").exists():
+        with open("../requirements/performance.json", "r") as f:
             req = json.load(f)
-            PERFORMANCE_MEASURE_FUNCTION = f"../3_requirements/{req['function']}"
+            PERFORMANCE_MEASURE_FUNCTION = f"../metrics/performance/{req['function']}"
         return True
     return False
 
@@ -84,8 +84,8 @@ def metric_measurement_available() -> bool :
 def model_available() -> bool :
     global MODEL
 
-    if Path("../2_models/random_forest_model.pkl").exists():
-        with open("../2_models/random_forest_model.pkl", "rb") as f:
+    if Path(f"../experiments/{SELECTED_EXPERIMENT}/model.pkl").exists():
+        with open(f"../experiments/{SELECTED_EXPERIMENT}/model.pkl", "rb") as f:
             MODEL = pickle.load(f)
         return True
     return False

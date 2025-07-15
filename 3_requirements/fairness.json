@@ -1,7 +1,0 @@
-{
-    "name" : "demographic_parity_measure",
-    "function" : "demographic_parity.py",
-    "sensitive_feature" : "sex",
-    "threshold" : 0.2,
-    "threshold_type" : "inf"
-}
