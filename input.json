@@ -1,0 +1,29 @@
+{
+"experiment_name" : "RF_Income_Fair2",
+    "data_source" : {
+        "dataset" : "adult_census_income",
+        "preprocessing" : "adult_census_preprocess.py"
+    },
+    "split_param" : {
+        "target" : "income",
+        "protected" : "sex",
+        "test_size" : 0.2,
+        "seed" : 42
+    },
+    "model" : {
+        "type" : "RandomForestClassifier",
+        "hyperparameters" : {
+            "n_estimators": 100,
+            "max_depth": 10,
+            "random_state": 1
+        }
+    },
+    "performance_metrics" : ["accuracy.py", "f1_score.py"],
+    "fairness_metrics" : ["demographic_parity.py"],
+    "fairness_treatment" : ["undersampling_class_balance", "hide_protected"],
+    "fairness_treatment_param" : {
+        "undersampling_class_balance" : {
+            "random_state" : 1
+        }
+    }
+}
