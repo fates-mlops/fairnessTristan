@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 
 #### PARAMETERES LOADING ####
 
-with open("experiments/input.json", "r", encoding="utf-8") as f:
+with open("input.json", "r", encoding="utf-8") as f:
     input_param = json.load(f)
 
 EXPERIMENT_NAME = input_param["experiment_name"]
@@ -26,6 +26,7 @@ PERFORMANCE_METRICS = input_param["performance_metrics"]
 FAIRNESS_METRICS = input_param["fairness_metrics"]
 # Other treatments
 FAIRNESS_TREATMENT = input_param["fairness_treatment"]
+FAIRNESS_TREATMENT_PARAM = input_param["fairness_treatment_param"]
 
 ###############################
 
@@ -52,6 +53,16 @@ preprocess = module.preprocess
 preprocessed_data = preprocess(dataset, experiment_path)
 
 train, test = train_test_split(preprocessed_data, test_size=SPLIT_TEST_SIZE, random_state=SPLIT_SEED, shuffle=True)
+
+if "undersampling_class_balance" in FAIRNESS_TREATMENT :
+    fav_data = train[train[SPLIT_PROTECTED] == 1]
+    unfav_data = train[train[SPLIT_PROTECTED] == 0]
+    min_size = min(len(fav_data), len(unfav_data))
+    fav_data = fav_data.sample(n=min_size, random_state=FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state'])
+    unfav_data = unfav_data.sample(n=min_size, random_state=FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state'])
+    train = pd.concat([fav_data, unfav_data])
+    train = train.sample(frac=1, random_state=FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state'])
+
 X_train = train.drop(SPLIT_TARGET, axis=1)
 y_train = train[SPLIT_TARGET]
 X_test = test.drop(SPLIT_TARGET, axis=1)
