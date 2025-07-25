@@ -18,8 +18,8 @@
             "random_state": 1
         }
     },
-    "performance_metrics" : ["accuracy.py", "f1_score.py"],
-    "fairness_metrics" : ["demographic_parity.py"],
+    "performance_metrics" : ["accuracy.py", "f1_score.py", "precision.py", "recall.py"],
+    "fairness_metrics" : ["demographic_parity_diff.py",  "disparate_impact_ratio.py", "equalized_odds_diff.py", "predictive_parity_diff.py"],
     "fairness_treatment" : ["undersampling_class_balance", "hide_protected"],
     "fairness_treatment_param" : {
         "undersampling_class_balance" : {
