@@ -20,7 +20,7 @@ SPLIT_TEST_SIZE = input_param["split_param"]["test_size"]
 SPLIT_SEED = input_param["split_param"]["seed"] 
 # Model
 MODEL_TYPE = input_param["model"]["type"] 
-MODEL_HYPERPARAMETERS = input_param["model"]["hyperparameters"] 
+MODEL_HYPERPARAMETERS = input_param["model"]["hyperparameters"]
 # Metrics
 PERFORMANCE_METRICS = input_param["performance_metrics"]
 FAIRNESS_METRICS = input_param["fairness_metrics"]
@@ -45,7 +45,7 @@ os.makedirs(experiment_path)
 
 dataset = pd.read_csv(f"data/{DATA_SOURCE}/data.csv")
 
-preprocessing_path = Path(f"data/{DATA_SOURCE}/preprocessing/{DATA_PREPROCESSING}")
+preprocessing_path = Path(f"data/{DATA_SOURCE}/preprocessing/{DATA_PREPROCESSING}.py")
 spec = importlib.util.spec_from_file_location("preprocessing", preprocessing_path)
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
@@ -58,10 +58,10 @@ if "undersampling_class_balance" in FAIRNESS_TREATMENT :
     fav_data = train[train[SPLIT_PROTECTED] == 1]
     unfav_data = train[train[SPLIT_PROTECTED] == 0]
     min_size = min(len(fav_data), len(unfav_data))
-    fav_data = fav_data.sample(n=min_size, random_state=FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state'])
-    unfav_data = unfav_data.sample(n=min_size, random_state=FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state'])
+    fav_data = fav_data.sample(n=min_size, random_state=int(FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state']))
+    unfav_data = unfav_data.sample(n=min_size, random_state=int(FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state']))
     train = pd.concat([fav_data, unfav_data])
-    train = train.sample(frac=1, random_state=FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state'])
+    train = train.sample(frac=1, random_state=int(FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state']))
 
 X_train = train.drop(SPLIT_TARGET, axis=1)
 y_train = train[SPLIT_TARGET]
@@ -87,9 +87,12 @@ p_test.to_csv(f"{experiment_path}/split/p_test.csv", index=None)
 
 
 #### MODEL TRAINING AND PREDICTIONS ####
-if MODEL_TYPE == "RandomForestClassifier":
+if MODEL_TYPE == "Random Forest Classifier":
     from sklearn.ensemble import RandomForestClassifier
     import pickle
+    MODEL_HYPERPARAMETERS = {
+        k: int(v) for k, v in MODEL_HYPERPARAMETERS.items() # ATTENTION : SOLUTION DE SECOURS, IL FAUDRAIT SEPARER LES HYPERPARAMETRES PAR TYPES POUR LA SAISIE
+    }
     model = RandomForestClassifier(**MODEL_HYPERPARAMETERS)
     model.fit(X_train, y_train)
     with open(f"{experiment_path}/model.pkl", "wb") as f:
@@ -106,23 +109,23 @@ pd.Series(y_pred).to_csv(f"{experiment_path}/y_pred.csv", index=None)
 
 input_param["performance_measurments"] = {}
 for metric in PERFORMANCE_METRICS :
-    metric_path = Path(f"metrics/performance/{metric}")
+    metric_path = Path(f"metrics/performance/{metric}.py")
     spec = importlib.util.spec_from_file_location("metric", metric_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     metric_function = module.metric
     measure = metric_function(y_test, y_pred)
-    input_param["performance_measurments"][metric[:-3]] = measure
+    input_param["performance_measurments"][metric] = measure
 
 input_param["fairness_measurments"] = {}
 for metric in FAIRNESS_METRICS :
-    metric_path = Path(f"metrics/fairness/{metric}")
+    metric_path = Path(f"metrics/fairness/{metric}.py")
     spec = importlib.util.spec_from_file_location("metric", metric_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     metric_function = module.metric
     measure = metric_function(y_test, y_pred, p_test)
-    input_param["fairness_measurments"][metric[:-3]] = measure
+    input_param["fairness_measurments"][metric] = measure
 
 #################
 

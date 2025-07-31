@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import json
 
 dataset_preprocessing = {}
 data_dir = "./data"
@@ -24,17 +25,25 @@ performance_path = "./metrics/performance"
 performance_metrics_list = [file[:-3] for file in os.listdir(performance_path) if file.endswith('.py') and os.path.isfile(os.path.join(performance_path, file))]
 fairness_path = "./metrics/fairness"
 fairness_metrics_list = [file[:-3] for file in os.listdir(fairness_path) if file.endswith('.py') and os.path.isfile(os.path.join(fairness_path, file))]
-
+fairness_treatment_list = [
+    "undersampling_class_balance", 
+    "hide_protected"
+]
+fairness_treatment_param_list = {
+    "undersampling_class_balance" : ["random_state"],
+    "hide_protected" : []
+}
 
 def app():
 
     st.title("New Experiment")
-
     is_valid = True
 
     # Fill the experiment name
     experiment_name = st.text_input("Experiment name")
 
+    
+    st.subheader("Data Preparation")
     # Choose the data source
     dataset_options = ["Choose a dataset"] + list(dataset_preprocessing.keys())
     data_source = st.selectbox("Dataset", dataset_options)
@@ -52,6 +61,8 @@ def app():
         st.warning("Please choose a preprocessing")
         is_valid = False
 
+    
+    st.subheader("Model Preparation")
     # Choose the type of ML process
     learning_task_options = ["Choose a learning task"] + list(models.keys())
     learning_task = st.selectbox("Learning task", learning_task_options)
@@ -88,7 +99,15 @@ def app():
         st.warning("Please choose a test size between 0 and 1 (excluded)")
         is_valid = False
     split_seed = st.number_input("Train & Test split random seed", min_value=0, max_value=100, step=1)
+
+    st.subheader("Performance Monitoring")
+    performance_metrics = []
+    for metric in performance_metrics_list :
+        metric_check = st.checkbox(f"Use metric: {metric}")
+        if metric_check : 
+            performance_metrics.append(metric)
     
+    st.subheader("Fairness Monitoring")
     # Fairness : Protected feature
     fairness = st.checkbox("Fairness: Protect a sub-group")
     if fairness:
@@ -100,33 +119,48 @@ def app():
         # Mettre en place une validation sur les colonnes existantes -> Possible sans effectuer le prétraitement dans le vide ?
         is_valid = False
 
-    performance_metrics = []
-    for metric in performance_metrics_list :
-        metric_check = st.checkbox(f"Use performance metric: {metric}")
-        if metric_check : 
-            performance_metrics.append(metric)
-
     fairness_metrics = []
+    fairness_treatment = []
+    fairness_treatment_param = {}
     if fairness:
         for metric in fairness_metrics_list :
             metric_check = st.checkbox(f"Use fairness mertric: {metric}")
             if metric_check :
                 fairness_metrics.append(metric)
+        for treatment in fairness_treatment_list :
+            treatment_check = st.checkbox(f"Use fairness treatment: {treatment}")
+            if treatment_check :
+                fairness_treatment.append(treatment)
+                fairness_treatment_param[treatment] = {}
+                for param in fairness_treatment_param_list[treatment] :
+                    fairness_treatment_param[treatment][param] = st.number_input(param)
+    
 
     if st.button("Send"):
         if is_valid :
-            st.write(f"Name: {experiment_name}")
-            st.write(f"Data Source: {data_source}")
-            st.write(f"Data Preprocessing: {preprocessing}")
-            st.write(f"Learning task: {learning_task}")
-            st.write(f"Model Type: {model_type}")
-            st.write(f"Target: {target}")
-            st.write(f"Test size: {test_size}")
-            st.write(f"Split seed: {split_seed}")
-            st.write(f"Protected feature: {protected}")
-            for key, elem in hyperparameters.items() :
-                st.write(f"Hyperparameters - {key}: {elem}")
-            st.write(f"Performance metrics: {performance_metrics}")
-            st.write(f"Fairness metrics: {fairness_metrics}")
+            param_json = {}
+            param_json["experiment_name"] = experiment_name
+            param_json["data_source"] = {
+                "dataset" : data_source,
+                "preprocessing" : preprocessing
+            }
+            param_json["split_param"] = {
+                "target" : target,
+                "protected" : protected,
+                "test_size" : test_size,
+                "seed" : split_seed
+            }
+            param_json["model"] = {
+                "type" : model_type,
+                "hyperparameters" : hyperparameters,
+            }
+            param_json["performance_metrics"] = performance_metrics
+            param_json["fairness_metrics"] = fairness_metrics
+            param_json["fairness_treatment"] = fairness_treatment
+            param_json["fairness_treatment_param"] = fairness_treatment_param
+
+            with open("./input.json", "w") as f:
+                json.dump(param_json, f, indent=4)
+
         else :
             st.error("Could not start the experiment. Please fill the requested parameters.")
