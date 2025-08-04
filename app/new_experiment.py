@@ -1,4 +1,5 @@
 import streamlit as st
+import sys
 import os
 import json
 
@@ -41,7 +42,10 @@ def app():
 
     # Fill the experiment name
     experiment_name = st.text_input("Experiment name")
-
+    existing_experiments = [name for name in os.listdir("experiments") if os.path.isdir(os.path.join("experiments", name))]
+    if experiment_name in existing_experiments :
+        st.warning("This name is already taken. Please choose another experiment name.")
+        is_valid = False
     
     st.subheader("Data Preparation")
     # Choose the data source
@@ -158,9 +162,10 @@ def app():
             param_json["fairness_metrics"] = fairness_metrics
             param_json["fairness_treatment"] = fairness_treatment
             param_json["fairness_treatment_param"] = fairness_treatment_param
-
-            with open("./input.json", "w") as f:
-                json.dump(param_json, f, indent=4)
+            sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+            from experiment import run_experiment
+            run_experiment(param_json)
+            st.write("Experiment successfully completed.")
 
         else :
             st.error("Could not start the experiment. Please fill the requested parameters.")
