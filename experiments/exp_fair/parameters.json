@@ -1,0 +1,55 @@
+{
+    "experiment_name": "exp_fair",
+    "data_source": {
+        "dataset": "adult_census_income",
+        "preprocessing": "adult_census_preprocess"
+    },
+    "split_param": {
+        "target": "income",
+        "protected": "sex",
+        "test_size": 0.2,
+        "seed": 1
+    },
+    "model": {
+        "type": "Random Forest Classifier",
+        "hyperparameters": {
+            "n_estimators": 100.0,
+            "max_depth": 10.0,
+            "random_state": 1.0
+        }
+    },
+    "performance_metrics": [
+        "accuracy",
+        "f1_score",
+        "precision",
+        "recall"
+    ],
+    "fairness_metrics": [
+        "demographic_parity_diff",
+        "disparate_impact_ratio",
+        "equalized_odds_diff",
+        "predictive_parity_diff"
+    ],
+    "fairness_treatment": [
+        "undersampling_class_balance",
+        "hide_protected"
+    ],
+    "fairness_treatment_param": {
+        "undersampling_class_balance": {
+            "random_state": 1.0
+        },
+        "hide_protected": {}
+    },
+    "performance_measurments": {
+        "accuracy": 0.8624289881774911,
+        "f1_score": 0.6556495003843198,
+        "precision": 0.8265503875968992,
+        "recall": 0.543312101910828
+    },
+    "fairness_measurments": {
+        "demographic_parity_diff": 0.15651681326208142,
+        "disparate_impact_ratio": 0.2573157340069507,
+        "equalized_odds_diff": 0.12349988046856325,
+        "predictive_parity_diff": 0.052312428142268996
+    }
+}

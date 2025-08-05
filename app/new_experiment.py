@@ -156,7 +156,7 @@ def app():
             }
             param_json["model"] = {
                 "type" : model_type,
-                "hyperparameters" : hyperparameters,
+                "hyperparameters" : hyperparameters
             }
             param_json["performance_metrics"] = performance_metrics
             param_json["fairness_metrics"] = fairness_metrics
