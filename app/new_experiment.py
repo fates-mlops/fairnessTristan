@@ -18,6 +18,10 @@ models = {
         {
             'name' : 'Random Forest Classifier',
             'hyperparameters' : ['n_estimators', 'max_depth', 'random_state']
+        },
+        {
+            'name' : "Small MLP",
+            'hyperparameters' : []
         }
     ]
 }

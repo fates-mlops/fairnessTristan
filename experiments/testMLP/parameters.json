@@ -1,0 +1,43 @@
+{
+    "experiment_name": "testMLP",
+    "data_source": {
+        "dataset": "adult_census_income",
+        "preprocessing": "adult_census_preprocess"
+    },
+    "split_param": {
+        "target": "income",
+        "protected": "sex",
+        "test_size": 0.2,
+        "seed": 1
+    },
+    "model": {
+        "type": "Small MLP",
+        "hyperparameters": {}
+    },
+    "performance_metrics": [
+        "accuracy",
+        "f1_score",
+        "precision",
+        "recall"
+    ],
+    "fairness_metrics": [
+        "demographic_parity_diff",
+        "disparate_impact_ratio",
+        "equalized_odds_diff",
+        "predictive_parity_diff"
+    ],
+    "fairness_treatment": [],
+    "fairness_treatment_param": {},
+    "performance_measurments": {
+        "accuracy": 0.8426224474128666,
+        "f1_score": 0.6744998412194347,
+        "precision": 0.6725775807473084,
+        "recall": 0.6764331210191082
+    },
+    "fairness_measurments": {
+        "demographic_parity_diff": 0.1811913180363222,
+        "disparate_impact_ratio": 0.40195833613125614,
+        "equalized_odds_diff": 0.07126967733343492,
+        "predictive_parity_diff": 0.14616467074466555
+    }
+}

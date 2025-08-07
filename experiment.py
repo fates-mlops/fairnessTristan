@@ -90,8 +90,31 @@ def run_experiment(input_param) :
         model.fit(X_train, y_train)
         with open(f"{experiment_path}/model.pkl", "wb") as f:
             pickle.dump(model, f)
+        y_pred = model.predict(X_test)
 
-    y_pred = model.predict(X_test)
+    elif MODEL_TYPE == "Small MLP":
+        import tensorflow as tf
+        from tensorflow.keras.models import Sequential
+        from tensorflow.keras.layers import Input, Dense
+        from tensorflow.keras.optimizers import Adam
+
+        input_dimension = X_train.shape[1]
+        model = Sequential([
+            Input(shape=(input_dimension,)),
+            Dense(64, activation='relu'),
+            Dense(32, activation='relu'),
+            Dense(1, activation='sigmoid')
+        ])
+        model.compile(
+            optimizer=Adam(learning_rate=0.001),
+            loss='binary_crossentropy',
+            metrics=['accuracy']
+        )
+        model.fit(X_train, y_train, batch_size=32, epochs=50)
+        y_pred_proba = model.predict(X_test)
+        y_pred_proba = y_pred_proba.flatten()
+        y_pred = y_pred_proba > 0.5
+
     pd.Series(y_pred).to_csv(f"{experiment_path}/y_pred.csv", index=None)
 
     ###########################################
