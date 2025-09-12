@@ -25,6 +25,9 @@ def run_experiment(input_param) :
     FAIRNESS_TREATMENT = input_param["fairness_treatment"]
     FAIRNESS_TREATMENT_PARAM = input_param["fairness_treatment_param"]
 
+    REQUIREMENTS = [r[:-3] for r in os.listdir("jpipe-libs") if (r.endswith('.py') and r!='__init__.py')]
+
+
     #### CREATION OF THE EXPERIMENT FOLDER ####
     experiment_path = f"experiments/{EXPERIMENT_NAME}"
     #if not os.path.exists(experiment_path) :  Cette vérification est effectuée dans le formulaire.
@@ -146,13 +149,29 @@ def run_experiment(input_param) :
     #################
 
 
-
     #### SAVING PARAMETERS AND MEASURES ####
 
     with open(f"{experiment_path}/parameters.json", "w", encoding="utf-8") as f:
         json.dump(input_param, f, indent=4, ensure_ascii=False)
 
     #######################################
+
+
+
+    input_param["requirements"] = {}
+    for requirement in REQUIREMENTS :
+        requirement_path = Path(f"jpipe-libs/{requirement}.py")
+        spec = importlib.util.spec_from_file_location("req", requirement_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        requirement_checker = module.checker
+        check = requirement_checker(EXPERIMENT_NAME)
+        input_param["requirements"][requirement] = check
+
+    with open(f"{experiment_path}/parameters.json", "w", encoding="utf-8") as f:
+        json.dump(input_param, f, indent=4, ensure_ascii=False)
+
+
 
     return None
 

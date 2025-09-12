@@ -43,5 +43,9 @@
         "disparate_impact_ratio": 0.2418504238098273,
         "equalized_odds_diff": 0.14252928520200808,
         "predictive_parity_diff": 0.06568255687974
+    },
+    "requirements": {
+        "fairness": "[OK] Threshold level defined</br>[OK] Metric measurement available</br>[OK] Model available</br>[OK] Test dataset available</br>[OK] Fairness metric computed</br>[OK] Threshold acceptance verified</br>[ALL PASSED]",
+        "performance": "[OK] Threshold level defined</br>[OK] Metric measurement available</br>[OK] Model available</br>[OK] Test dataset available</br>[OK] Performance metric computed</br>[OK] Threshold acceptance verified</br>[ALL PASSED]"
     }
 }

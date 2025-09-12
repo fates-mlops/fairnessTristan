@@ -132,7 +132,7 @@ def app():
     fairness_treatment_param = {}
     if fairness:
         for metric in fairness_metrics_list :
-            metric_check = st.checkbox(f"Use fairness mertric: {metric}")
+            metric_check = st.checkbox(f"Use fairness metric: {metric}")
             if metric_check :
                 fairness_metrics.append(metric)
         for treatment in fairness_treatment_list :

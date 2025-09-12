@@ -9,8 +9,11 @@ def app():
     st.title("Recap")
     
     experiment_dir = "experiments"
+    requirements_dir = "jpipe-libs"
 
     experiments = [d for d in os.listdir(experiment_dir) if os.path.isdir(os.path.join(experiment_dir, d))]
+
+    requirements = [r[:-3] for r in os.listdir(requirements_dir) if r.endswith('.py')]
 
     selected_experiments = st.multiselect("Select up to two experiments to review",
                                           options = experiments,
@@ -98,6 +101,16 @@ def app():
                 string += "</ul>"
                 st.markdown(string, unsafe_allow_html=True)
 
+            st.markdown("<b>Requirements</b>", unsafe_allow_html=True)
+
+            string = ""
+            for requirement in requirements :
+                string += f"Requirement : {requirement}</br>"
+                string += exp1_param["requirements"][requirement]
+                string += "</br>"
+            
+            st.markdown(string, unsafe_allow_html=True)
+
 
         with col2 : 
 
@@ -167,6 +180,16 @@ def app():
                 string += "</ul>"
                 st.markdown(string, unsafe_allow_html=True)
 
+            st.markdown("<b>Requirements</b>", unsafe_allow_html=True)
+
+            string = ""
+            for requirement in requirements :
+                string += f"Requirement : {requirement}</br>"
+                string += exp2_param["requirements"][requirement]
+                string += "</br>"
+        
+            st.markdown(string, unsafe_allow_html=True)
+
     elif len(selected_experiments) == 1:
 
         exp1 = selected_experiments[0]
@@ -229,3 +252,15 @@ def app():
                 string += "</li>"
             string += "</ul>"
             st.markdown(string, unsafe_allow_html=True)
+
+        
+
+        st.markdown("<b>Requirements</b>", unsafe_allow_html=True)
+
+        string = ""
+        for requirement in requirements :
+            string += f"Requirement : {requirement}</br>"
+            string += exp1_param["requirements"][requirement]
+            string += "</br>"
+        
+        st.markdown(string, unsafe_allow_html=True)
