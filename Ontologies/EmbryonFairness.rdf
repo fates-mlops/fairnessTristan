@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/leand/ontologies/EmbryonFairness/"
+     xml:base="http://www.semanticweb.org/leand/ontologies/EmbryonFairness/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#isMeasuredBy -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#isMeasuredBy">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#measure"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Properties"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Metrics"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#measure -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#measure">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Metrics"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Properties"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Properties"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness_Metrics -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness_Metrics">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Metrics"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Metrics -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Metrics"/>
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Parity -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Parity">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#isMeasuredBy"/>
+                        <owl:hasValue rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Demographic_Parity"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Properties -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Properties"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Demographic_Parity -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Demographic_Parity">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness_Metrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Disparate_Impact -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Disparate_Impact">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness_Metrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Equal_Odds -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Equal_Odds">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness_Metrics"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Equal_Opportunity -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Equal_Opportunity">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leand/ontologies/EmbryonFairness#Fairness_Metrics"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+
