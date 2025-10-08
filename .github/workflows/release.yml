@@ -6,6 +6,10 @@ on:
   push:
     branches:
       - main # for demonstration purpose only
+    paths-ignore:
+      - 'README.md'
+      - 'experiments/**'
+
   pull_request:
 
 env:
