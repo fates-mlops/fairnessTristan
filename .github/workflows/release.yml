@@ -1,0 +1,60 @@
+name: Release the trained model for the fairness income demo code
+
+# In real life applications, the workflow would only be triggered 
+# on pull requests
+on:
+  push:
+    branches:
+      - main # for demonstration purpose only
+  pull_request:
+
+env:
+  JUSTIFICATION_MODEL: "./fairClassification.jd"
+  KERAS_MODEL: "./out/model.pkl"
+  WORKFLOW_PROFILE: "./docs/remediation_exploration_profile.json"
+  WORKFLOW_PROFILE_COMPATIBLE_REGEX: "./docs/regex_compatible_profile.json"
+  WORKFLOW_MINDIFF_PATTERN_REGEX: "./docs/mindiff_pattern_regex.txt"
+  FAIRNESSLENS_REPORT_PDF: "./docs/fairness-income_fairness_report.pdf"
+
+jobs:
+
+  check-release-is-ok:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout source code 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install Poetry
+      - name: Install poetry
+        run: pipx install poetry
+
+      # Install python 3.11 with poetry cache
+      - name: Install Python with poetry cache
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      
+      # Install python dependencies, if needed
+      - name: Install dependencies with poetry
+        run: poetry install
+
+      # Run the justification
+      - name: Run jPipe Runner to support model training justification
+        uses: jpipe-mcscert/jpipe-runner@1.0.0
+        with:
+          jd_file: ${{ env.JUSTIFICATION_MODEL }}
+          version: "1.0.0"
+          python_path: "poetry run python"
+          library: |
+            jpipe-libs/fairness.py
+
+      # Release the model
+      - name: Release model
+        uses: actions/upload-artifact@v4
+        with:
+          name: model.keras
+          path: ${{ env.KERAS_MODEL }}

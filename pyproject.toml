@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "fairness-income demonstrator"
+version = "0.1.0"
+description = ""
+authors = ["Nicolas Lacroix <lacroix@i3s.unice.fr>", "Sébastien Mosser <mossers@mcmaster.ca>", "Jean-Michel Bruel <jean-michel.bruel@irit.fr>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "3.11.*"
+pandas = "1.5.3"
+numpy = "1.26.4"
+tensorflow = "2.15.0"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
+
+[tool.poetry.group.remediation.dependencies]
+tensorflow-model-remediation = "0.1.7.1"
+fairness-indicators = "0.46.0"
+tensorflow-model-analysis = "0.46.0"
+tensorflow-data-validation = "1.15.1"
+notebook = "^7.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
