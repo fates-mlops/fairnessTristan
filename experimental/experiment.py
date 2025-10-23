@@ -1,0 +1,180 @@
+import pandas as pd
+import json
+import os
+import importlib.util
+from pathlib import Path
+from sklearn.model_selection import train_test_split
+
+BASE_DIR = Path(__file__).resolve().parent
+
+def run_experiment(input_param) :
+
+    EXPERIMENT_NAME = input_param["experiment_name"]
+    # Data
+    DATA_SOURCE = input_param["data_source"]["dataset"]
+    DATA_PREPROCESSING = input_param["data_source"]["preprocessing"]
+    SPLIT_TARGET = input_param["split_param"]["target"]
+    SPLIT_PROTECTED = input_param["split_param"]["protected"] 
+    SPLIT_TEST_SIZE = input_param["split_param"]["test_size"] 
+    SPLIT_SEED = input_param["split_param"]["seed"] 
+    # Model
+    MODEL_TYPE = input_param["model"]["type"] 
+    MODEL_HYPERPARAMETERS = input_param["model"]["hyperparameters"]
+    # Metrics
+    PERFORMANCE_METRICS = input_param["performance_metrics"]
+    FAIRNESS_METRICS = input_param["fairness_metrics"]
+    # Other treatments
+    FAIRNESS_TREATMENT = input_param["fairness_treatment"]
+    FAIRNESS_TREATMENT_PARAM = input_param["fairness_treatment_param"]
+
+    REQUIREMENTS = [r[:-3] for r in os.listdir(BASE_DIR / "jpipe-libs") if (r.endswith('.py') and r!='__init__.py')]
+
+
+    #### CREATION OF THE EXPERIMENT FOLDER ####
+    experiment_path = BASE_DIR / "experiments"/ EXPERIMENT_NAME
+    os.makedirs(experiment_path)
+
+    ##############################################
+
+
+
+    #### DATA LOADING AND PROCESSING ####
+
+    dataset = pd.read_csv(BASE_DIR / "data" / DATA_SOURCE / "data.csv")
+
+    preprocessing_path = BASE_DIR / "data" / DATA_SOURCE / "preprocessing" / f"{DATA_PREPROCESSING}.py"
+    spec = importlib.util.spec_from_file_location("preprocessing", preprocessing_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    preprocess = module.preprocess
+    preprocessed_data = preprocess(dataset, experiment_path)
+
+    train, test = train_test_split(preprocessed_data, test_size=SPLIT_TEST_SIZE, random_state=SPLIT_SEED, shuffle=True)
+
+    if "undersampling_class_balance" in FAIRNESS_TREATMENT :
+        fav_data = train[train[SPLIT_PROTECTED] == 1]
+        unfav_data = train[train[SPLIT_PROTECTED] == 0]
+        min_size = min(len(fav_data), len(unfav_data))
+        fav_data = fav_data.sample(n=min_size, random_state=int(FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state']))
+        unfav_data = unfav_data.sample(n=min_size, random_state=int(FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state']))
+        train = pd.concat([fav_data, unfav_data])
+        train = train.sample(frac=1, random_state=int(FAIRNESS_TREATMENT_PARAM['undersampling_class_balance']['random_state']))
+
+    X_train = train.drop(SPLIT_TARGET, axis=1)
+    y_train = train[SPLIT_TARGET]
+    X_test = test.drop(SPLIT_TARGET, axis=1)
+    y_test = test[SPLIT_TARGET]
+    p_train = train[SPLIT_PROTECTED] 
+    p_test = test[SPLIT_PROTECTED]
+
+    if "hide_protected" in FAIRNESS_TREATMENT :
+        X_train = X_train.drop(SPLIT_PROTECTED, axis=1)
+        X_test = X_test.drop(SPLIT_PROTECTED, axis=1)
+
+    os.makedirs(experiment_path / "split")
+    X_train.to_csv(experiment_path / "split" / "X_train.csv", index=None)
+    y_train.to_csv(experiment_path / "split" / "y_train.csv", index=None)
+    X_test.to_csv(experiment_path / "split" / "X_test.csv", index=None)
+    y_test.to_csv(experiment_path / "split" / "y_test.csv", index=None)
+    p_train.to_csv(experiment_path / "split" / "p_train.csv", index=None)
+    p_test.to_csv(experiment_path / "split" / "p_test.csv", index=None)
+
+    ########################################
+
+
+
+    #### MODEL TRAINING AND PREDICTIONS ####
+    if MODEL_TYPE == "Random Forest Classifier":
+        from sklearn.ensemble import RandomForestClassifier
+        import pickle
+        MODEL_HYPERPARAMETERS = {
+            k: int(v) for k, v in MODEL_HYPERPARAMETERS.items() # ATTENTION : SOLUTION DE SECOURS, IL FAUDRAIT SEPARER LES HYPERPARAMETRES PAR TYPES POUR LA SAISIE
+        }
+        model = RandomForestClassifier(**MODEL_HYPERPARAMETERS)
+        model.fit(X_train, y_train)
+        with open(experiment_path / "model.pkl", "wb") as f:
+            pickle.dump(model, f)
+        y_pred = model.predict(X_test)
+
+    elif MODEL_TYPE == "Small MLP":
+        import tensorflow as tf
+        from tensorflow.keras.models import Sequential
+        from tensorflow.keras.layers import Input, Dense
+        from tensorflow.keras.optimizers import Adam
+
+        input_dimension = X_train.shape[1]
+        model = Sequential([
+            Input(shape=(input_dimension,)),
+            Dense(64, activation='relu'),
+            Dense(32, activation='relu'),
+            Dense(1, activation='sigmoid')
+        ])
+        model.compile(
+            optimizer=Adam(learning_rate=0.001),
+            loss='binary_crossentropy',
+            metrics=['accuracy']
+        )
+        model.fit(X_train, y_train, batch_size=32, epochs=50)
+        y_pred_proba = model.predict(X_test)
+        y_pred_proba = y_pred_proba.flatten()
+        y_pred = y_pred_proba > 0.5
+
+    pd.Series(y_pred).to_csv(experiment_path / "y_pred.csv", index=None)
+
+    ###########################################
+
+
+
+    #### MEASURES ####
+
+    input_param["performance_measurments"] = {}
+    for metric in PERFORMANCE_METRICS :
+        metric_path = BASE_DIR / "metrics" / "performance" / f"{metric}.py"
+        spec = importlib.util.spec_from_file_location("metric", metric_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        metric_function = module.metric
+        measure = metric_function(y_test, y_pred)
+        input_param["performance_measurments"][metric] = measure
+
+    input_param["fairness_measurments"] = {}
+    for metric in FAIRNESS_METRICS :
+        metric_path = BASE_DIR / "metrics" / "fairness" / f"{metric}.py"
+        spec = importlib.util.spec_from_file_location("metric", metric_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        metric_function = module.metric
+        measure = metric_function(y_test, y_pred, p_test)
+        input_param["fairness_measurments"][metric] = measure
+
+    #################
+
+
+    #### SAVING PARAMETERS AND MEASURES ####
+
+    with open(experiment_path / "parameters.json", "w", encoding="utf-8") as f:
+        json.dump(input_param, f, indent=4, ensure_ascii=False)
+
+    #######################################
+
+
+
+    input_param["requirements"] = {}
+    for requirement in REQUIREMENTS :
+        requirement_path = BASE_DIR / "jpipe-libs" / f"{requirement}.py"
+        spec = importlib.util.spec_from_file_location("req", requirement_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        requirement_checker = module.checker
+        check = requirement_checker(EXPERIMENT_NAME)
+        input_param["requirements"][requirement] = check
+
+    with open(experiment_path / "parameters.json", "w", encoding="utf-8") as f:
+        json.dump(input_param, f, indent=4, ensure_ascii=False)
+
+
+
+    return None
+
+if __name__ == "__main__":
+    raise RuntimeError("This script must be called using the streamlit interface form.")

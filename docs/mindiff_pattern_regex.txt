@@ -1,1 +1,0 @@
-(\{\s*"step":\s*"Model Training",\s*"algoFamily":\s*"[^"]*",\s*"algoName":\s*"MinDiff Model Training",\s*"library":\s*"tensorflow",\s*"function":\s*"fit"\s*\})

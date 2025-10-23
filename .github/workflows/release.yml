@@ -8,17 +8,18 @@ on:
       - main # for demonstration purpose only
     paths-ignore:
       - 'README.md'
-      - 'experiments/**'
+      - 'experimental/**'
+      - 'Ontologies/**'
 
   pull_request:
 
 env:
-  JUSTIFICATION_MODEL: "./fairClassification.jd"
-  KERAS_MODEL: "./out/model.pkl"
-  WORKFLOW_PROFILE: "./docs/remediation_exploration_profile.json"
-  WORKFLOW_PROFILE_COMPATIBLE_REGEX: "./docs/regex_compatible_profile.json"
-  WORKFLOW_MINDIFF_PATTERN_REGEX: "./docs/mindiff_pattern_regex.txt"
-  FAIRNESSLENS_REPORT_PDF: "./docs/fairness-income_fairness_report.pdf"
+  # JUSTIFICATION_MODEL: "./fairClassification.jd"
+  MODEL: "./out/model.pkl"
+  # WORKFLOW_PROFILE: "./docs/remediation_exploration_profile.json"
+  # WORKFLOW_PROFILE_COMPATIBLE_REGEX: "./docs/regex_compatible_profile.json"
+  # WORKFLOW_MINDIFF_PATTERN_REGEX: "./docs/mindiff_pattern_regex.txt"
+  # FAIRNESSLENS_REPORT_PDF: "./docs/fairness-income_fairness_report.pdf"
 
 jobs:
 
@@ -54,11 +55,11 @@ jobs:
           version: "1.0.0"
           python_path: "poetry run python"
           library: |
-            jpipe-libs/fairness.py
+            usecase/steps.py
 
       # Release the model
       - name: Release model
         uses: actions/upload-artifact@v4
         with:
-          name: model.keras
-          path: ${{ env.KERAS_MODEL }}
+          name: model
+          path: ${{ env.MODEL }}
