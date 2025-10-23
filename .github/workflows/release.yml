@@ -45,7 +45,7 @@ jobs:
       
       # Install python dependencies, if needed
       - name: Install dependencies with poetry
-        run: poetry install
+        run: poetry install --no-root
 
       # Run the justification
       - name: Run jPipe Runner to support model training justification
