@@ -14,8 +14,8 @@ on:
   pull_request:
 
 env:
-  # JUSTIFICATION_MODEL: "./fairClassification.jd"
-  MODEL: "./out/model.pkl"
+  JUSTIFICATION_MODEL: "./usecase/fairClassification.jd"
+  # MODEL: "./out/model.pkl"
   # WORKFLOW_PROFILE: "./docs/remediation_exploration_profile.json"
   # WORKFLOW_PROFILE_COMPATIBLE_REGEX: "./docs/regex_compatible_profile.json"
   # WORKFLOW_MINDIFF_PATTERN_REGEX: "./docs/mindiff_pattern_regex.txt"
