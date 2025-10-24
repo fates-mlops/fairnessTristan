@@ -14,7 +14,7 @@ on:
   pull_request:
 
 env:
-  JUSTIFICATION_MODEL: "./usecase/fairClassification.jd"
+  JUSTIFICATION_MODEL: "./usecase/requirements/fairClassification.jd"
   # MODEL: "./out/model.pkl"
   # WORKFLOW_PROFILE: "./docs/remediation_exploration_profile.json"
   # WORKFLOW_PROFILE_COMPATIBLE_REGEX: "./docs/regex_compatible_profile.json"
@@ -55,7 +55,7 @@ jobs:
           version: "1.0.0"
           python_path: "poetry run python"
           library: |
-            usecase/steps.py
+            usecase/requirements/fairness.py
 
       # Release the model
       - name: Release model
