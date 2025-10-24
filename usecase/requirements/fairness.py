@@ -72,9 +72,9 @@ def test_data_set_available() -> bool :
 
 
 # Evidence "measurement" in "fairClassification"
-def metric_measurement_available() -> bool :
+def the_metric_measurement_available() -> bool :
     global FAIRNESS_MEASURE_FUNCTION
-
+    
     if (BASE_DIR / "requirements" / "fairness.json").exists():
         with open(BASE_DIR / "requirements" / "fairness.json", "r") as f:
             req = json.load(f)
