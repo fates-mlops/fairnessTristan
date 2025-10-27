@@ -58,8 +58,8 @@ jobs:
             usecase/requirements/fairness.py
 
       # Release the model
-      - name: Release model
-        uses: actions/upload-artifact@v4
-        with:
-          name: model
-          path: ${{ env.MODEL }}
+      # - name: Release model
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: model
+      #     path: ${{ env.MODEL }}

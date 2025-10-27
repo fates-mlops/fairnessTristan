@@ -1,17 +1,17 @@
 # ...
 
+Create the python virtual env with poetry dependencies
+
+```
+poetry install --no-root
+```
+
 ## experimental
 
 To be completed -> poetry required
 
 ```
 cd experimental
-```
-
-Create the python virtual env with poetry dependencies
-
-```
-poetry install --no-root
 ```
 
 Start the app
