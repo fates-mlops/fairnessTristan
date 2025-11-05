@@ -1,5 +1,5 @@
 {
-    "experiment_name": "unfair_random_classifier",
+    "experiment_name": "exp",
     "data_source": {
         "dataset": "adult_census_income",
         "preprocessing": "adult_census_preprocess"
@@ -11,8 +11,12 @@
         "seed": 1
     },
     "model": {
-        "type": "Unfair Random Classifier",
-        "hyperparameters": {}
+        "type": "Random Forest Classifier",
+        "hyperparameters": {
+            "n_estimators": 100.0,
+            "max_depth": 10.0,
+            "random_state": 1.0
+        }
     },
     "performance_metrics": [
         "accuracy",
@@ -29,15 +33,19 @@
     "fairness_treatment": [],
     "fairness_treatment_param": {},
     "performance_measurments": {
-        "accuracy": 0.6269000460617227,
-        "f1_score": 0.3533794571580628,
-        "precision": 0.30347349177330896,
-        "recall": 0.4229299363057325
+        "accuracy": 0.8595117457392907,
+        "f1_score": 0.6487523992322457,
+        "precision": 0.8164251207729468,
+        "recall": 0.5382165605095541
     },
     "fairness_measurments": {
-        "demographic_parity_diff": 0.5044961955268619,
-        "disparate_impact_ratio": 0.0,
-        "equalized_odds_diff": 0.5076615589606929,
-        "predictive_parity_diff": 0.30347349177330896
+        "demographic_parity_diff": 0.1613493333695018,
+        "disparate_impact_ratio": 0.2418504238098273,
+        "equalized_odds_diff": 0.14252928520200808,
+        "predictive_parity_diff": 0.06568255687974
+    },
+    "requirements": {
+        "fairness": "[OK] Threshold level defined</br>[OK] Metric measurement available</br>[OK] Model available</br>[OK] Test dataset available</br>[OK] Fairness metric computed</br>[OK] Threshold acceptance verified</br>[ALL PASSED]",
+        "performance": "[OK] Threshold level defined</br>[OK] Metric measurement available</br>[OK] Model available</br>[OK] Test dataset available</br>[OK] Performance metric computed</br>[OK] Threshold acceptance verified</br>[ALL PASSED]"
     }
 }
