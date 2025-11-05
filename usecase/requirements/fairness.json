@@ -2,6 +2,6 @@
     "name" : "demographic_parity_measure",
     "function" : "demographic_parity_diff.py",
     "sensitive_feature" : "sex",
-    "threshold" : 0.2,
+    "threshold" : 0.05,
     "threshold_type" : "inf"
 }
