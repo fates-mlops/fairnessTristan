@@ -1,0 +1,13 @@
+@startuml Ontology
+
+class Elements
+class Domain extends Elements
+class Concept extends Elements
+class Property extends Elements
+class Metric extends Elements
+Domain .> Concept
+Concept .> Property
+Property .> Metric
+Elements -> Reference
+
+@enduml
